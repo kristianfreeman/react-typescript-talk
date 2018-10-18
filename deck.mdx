@@ -1,0 +1,552 @@
+import { Head } from 'mdx-deck';
+export { default as theme } from './theme';
+
+<Head>
+  <title>😍 TypeScript, meet React</title>
+</Head>
+
+# `TypeScript`, meet `React`
+
+---
+
+# 👋 Hi, I'm Kristian
+
+---
+
+## @signalnerve
+
+---
+
+## Software engineer, technical trainer, community organizer
+
+---
+
+## Working with React since 2014
+
+---
+
+## This talk is the synthesis of two different situations
+
+---
+
+1. Teaching JavaScript
+2. Writing JavaScript
+
+---
+
+## Everyone has things that irk them about JavaScript
+
+---
+
+## If you teach JavaScript, these things generally come up organically
+
+---
+
+- Scope
+- Context
+- Types
+
+---
+
+# 💀 Types 💀
+
+---
+
+## Where are the types?
+
+---
+
+## _In React:_ what are the props? What is the state?
+
+---
+
+> Thinking about our application's input and output is what allows us to understand our React code, and what (hopefully) makes it bug-free
+
+---
+
+## But that's hard in JavaScript!
+
+---
+
+### JavaScript has allowed us to build and ship things to a global audience faster than ever before, but the language itself may still be the weakest part of the toolchain
+
+---
+
+## In 2016, I began hearing about TypeScript, and after exploring it a bit, was completely thrilled with the results
+
+---
+
+## This talk
+
+1. The details: writing TypeScript day-to-day
+2. Using it with React
+3. Next steps: exploring more about TypeScript, moving your app to TypeScript
+
+---
+
+## The details
+
+---
+
+# Why even use TypeScript?
+
+---
+
+> TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.
+
+---
+
+## Typed
+
+---
+
+## Type-checking: a function or variable has a type that must be defined and "correct"
+
+---
+
+```javascript
+const myName = "Kristian Freeman";
+```
+
+---
+
+```typescript
+const nameLength = name => console.log(name.length);
+nameLength(myName) // 16
+```
+
+---
+
+## An architecture requirement appears! A name is two fields: `first` and `last`
+
+---
+
+```typescript
+const name = {
+  first: "Kristian",
+  last: "Freeman"
+}
+```
+
+---
+
+```javascript
+nameLength(name) // undefined
+```
+
+---
+
+# 💀 Types 💀
+
+---
+
+## A code requirement: nameLength function takes a _string_
+
+---
+
+```typescript
+const nameLength = (name: string) => console.log(name.length);
+```
+
+---
+
+## The killer feature: compilation errors
+
+---
+
+```
+name.ts:6:12 - error TS2345: Argument of
+  type '{ first: string; last: string; }' is not
+  assignable to parameter of type 'string'.
+
+6 nameLength(myName);
+             ~~~~~~
+```
+
+---
+
+# 😍 Types 😍
+
+---
+
+## Superset of JavaScript
+
+---
+
+## Any JavaScript _is_ valid TypeScript
+
+---
+
+## Progressively transition your application code over to TypeScript
+
+---
+
+## Use "current" JavaScript: **ES6**, **async functions**, **decorators**
+
+---
+
+## Compiles to JavaScript
+
+---
+
+## Still plain JavaScript output
+
+---
+
+## Any TypeScript work stays in development, and it can integrate with your current build processes
+
+---
+
+## The details
+
+---
+
+## TypeScript contains a number of _basic types_
+
+---
+
+```typescript
+// Numbers
+let myAge: number = 24;
+let gasPrice: number = 2.95;
+```
+
+---
+
+```typescript
+// Booleans
+let isPresenting: boolean = true;
+let isEating: boolean = false;
+```
+
+---
+
+```typescript
+// Strings
+let firstName: string = "Kristian";
+```
+
+---
+
+```typescript
+// Arrays
+let languages: string[] = ["JavaScript", "Ruby", "Elixir"];
+let languages: Array<string> = ["JavaScript", "Ruby", "Elixir"];
+```
+
+---
+
+```typescript
+// Tuples
+let information: [string, string, number] = ["Kristian", "Freeman", 24];
+```
+
+---
+
+```typescript
+let information: [string, string, number];
+
+// Error
+information = ["Kristian", 24];
+```
+
+---
+
+```typescript
+// Enum
+enum State {WA, OR, CA}
+let california: State = State.CA;
+```
+
+---
+
+```typescript
+// Indexed enums
+enum State {WA, OR, CA}
+
+// Notice: `string`, not `State`
+let california: string = State[2]
+console.log(california) // "CA"
+```
+
+---
+
+## Type inference
+
+---
+
+```typescript
+let myAge = 24; // type is `number`
+let myName = "Kristian Freeman"; // type is `string`
+```
+
+---
+
+```typescript
+let myAge = 24;
+myAge.toUppercase();
+
+// MyAge.ts(2,7): error TS2339: Property 'toUpperCase'
+//   does not exist on type 'number'.
+```
+
+---
+
+# Interfaces
+
+---
+
+## Functions and variables _conform_ to interfaces
+
+---
+
+```typescript
+interface Person {
+  firstName: string;
+  lastName: string;
+  age: number;
+}
+```
+
+---
+
+```typescript
+// OK
+const me: Person = {
+  firstName: "Kristian",
+  lastName: "Freeman",
+  age: 25
+}
+
+// Error
+const you: Person = {
+  firstName: "Other",
+  lastName: "Person"
+}
+```
+
+---
+
+```typescript
+interface Person {
+  firstName: string;
+  lastName: string;
+  age?: number;
+}
+```
+
+---
+
+```typescript
+// OK
+const me: Person = {
+  firstName: "Kristian",
+  lastName: "Freeman",
+  age: 25
+}
+
+// OK
+const you: Person = {
+  firstName: "Other",
+  lastName: "Person"
+}
+```
+
+---
+
+## Classes combine interfaces with object-oriented behavior
+
+---
+
+```typescript
+class Person {
+  firstName: string;
+  lastName: string;
+  age: number;
+  constructor(first: string, last: string, age: number) {
+    this.firstName = first;
+    this.lastName = last;
+    this.age = age;
+  }
+}
+```
+
+---
+
+```typescript
+let me = new Person("Kristian", "Freeman", 24);
+console.log(me.firstName);
+console.log(me.lastName);
+me.age + 10;
+```
+
+---
+
+## In practice: type inference handles most of what you need, but progressively defining explicit types isn't a bad idea
+
+---
+
+# Now for the practical: moving a React component to TypeScript
+
+---
+
+> In React, we reason about how our components work by asking: what are the props? What is the state?
+
+---
+
+## TypeScript doubles down on that approach: explicitly define interfaces for prop and state
+
+---
+
+```javascript
+// JavaScript
+
+class HelloComponent extends React.Component = {
+  render() {
+    return <p>{this.props.message}</p>;
+  }
+}
+```
+
+---
+
+```typescript
+// TypeScript
+
+class HelloComponent: React.Component<Props, State> = {
+  render() {
+    return <p>{this.props.message}</p>;
+  }
+}
+```
+
+---
+
+## Defining the component props interface
+
+---
+
+```typescript
+interface IProps {
+  message: string;
+}
+```
+
+---
+
+```typescript
+class HelloComponent: React.Component<IProps, {}> = {
+  render() {
+    return <p>{this.props.message}</p>;
+  }
+}
+```
+
+---
+
+```typescript
+interface IProps {
+  message: string; // required
+  paragraphClass?: string; // optional
+}
+```
+
+---
+
+```typescript
+class HelloComponent: React.Component<IProps, {}> = {
+  render() {
+    const { message, paragraphClass } = this.props;
+    return <p className={paragraphClass}>
+      {message}
+    </p>;
+  }
+}
+```
+
+---
+
+```typescript
+<HelloComponent message={0} /> // Error
+<HelloComponent message="Hello, world!" /> // OK
+```
+
+---
+
+```typescript
+<HelloComponent
+  message="Hello, world!"
+  paragraphClass={0} /> // Error
+
+<HelloComponent
+  message="Hello, world!"
+  paragraphClass="big" /> // OK
+```
+
+---
+
+## What about open-source projects?
+
+---
+
+## The React community has an incredible amount of open-source components, libraries, and more
+
+---
+
+## _A lot_ of them support TypeScript, but if they don't...
+
+---
+
+## DefinitelyTyped repo
+
+---
+
+```
+yarn add @types/react @types/react-dom
+```
+
+---
+
+## Community maintained type definitions for projects
+
+---
+
+## Let's do this! The TypeScript migration process
+
+---
+
+### `ts-loader`
+
+---
+
+## TypeScript Handbook: "Integrating with Build Tools"
+
+---
+
+1. Batch rename all `.js` files to `.ts` (or `.tsx` for `.jsx` files)
+2. Run those through webpack
+3. Install `ts-lint`
+
+---
+
+## ts-lint encourages good TypeScript code via community-agreed upon rules
+
+---
+
+### Typescript Book
+#### github.com/basarat/typescript-book
+
+---
+
+### Example React + Redux TypeScript project
+#### gitlab.com/bytesizedxyz/thewidgetcompany-typescript
+
+---
+
+## Shout-out to Visual Studio Code
+- _built-in_ TypeScript support
+- easy `ts-lint` plugin installation
+
+---
+
+# 😍 Types 😍
